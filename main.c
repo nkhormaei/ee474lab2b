@@ -5,13 +5,13 @@
 This part of the lab (task 1) had 2 main goals- 1) turn on the lights in a specific pattern
 depending on the timers instead of delays
 */
-
+int counter;
 // main function of the program 
 int main(void)
 {
   lights();
   timer_initc();
-  polling_GPIO();
+  while (1) {};
   return 0;
 }
 
@@ -44,34 +44,28 @@ void lights() {
 
 }
 
-// function to go through different lights turning on and off depending on the count 
-void polling_GPIO() {
-  int counter = 0;
-  while (1) {
-    if (GPTMRIS_0 & 0x1) { // checking if flag is true
-      GPTMICR_0 |= 0x1; // clearing flag
-      if (counter == 0) {
-          GPIODATA_N |= 0x1;
-      } else if (counter == 1) {
-          GPIODATA_N |= 0x2;
-      } else if (counter == 2) {
-          GPIODATA_F |= 0x1;
-      } else if (counter == 3) {
-          GPIODATA_F |= 0x2;
-      } else if (counter == 4) {
-          GPIODATA_N &= ~0x1;
-      } else if (counter == 5) {
-          GPIODATA_N &= ~0x2;
-      } else if (counter == 6) {
-          GPIODATA_F &= ~0x1;
-      } else if (counter == 7) {
-          GPIODATA_F &= ~0x2;
-      }
-      if (counter == 7) { // checking counter value
-        counter = 0; 
-      } else {
-        counter += 1; // incrementing value
-      }
-    }
+void Timer0A_Handler() {
+  GPTMICR_0 |= 0x1; // clearing flag
+  if (counter == 0) {
+      GPIODATA_N |= 0x1;
+  } else if (counter == 1) {
+      GPIODATA_N |= 0x2;
+  } else if (counter == 2) {
+      GPIODATA_F |= 0x1;
+  } else if (counter == 3) {
+      GPIODATA_F |= 0x2;
+  } else if (counter == 4) {
+      GPIODATA_N &= ~0x1;
+  } else if (counter == 5) {
+      GPIODATA_N &= ~0x2;
+  } else if (counter == 6) {
+      GPIODATA_F &= ~0x1;
+  } else if (counter == 7) {
+      GPIODATA_F &= ~0x2;
+  }
+  if (counter == 7) { // checking counter value
+    counter = 0; 
+  } else {
+    counter += 1; // incrementing value
   }
 }
